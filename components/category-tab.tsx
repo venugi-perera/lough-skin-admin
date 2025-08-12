@@ -101,53 +101,54 @@ export default function CategoryPanel() {
           </p>
         </div>
       </div>
+      <Card className="pt-6">
+        <CardContent>
+          {/* Input for new/edit category */}
+          <div className="flex gap-2 mb-4">
+            <Input
+              placeholder="Category Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Button onClick={handleSaveCategory} disabled={loading}>
+              {editingId ? "Update" : "Add"}
+            </Button>
+          </div>
 
-      <CardContent>
-        {/* Input for new/edit category */}
-        <div className="flex gap-2 mb-4">
-          <Input
-            placeholder="Category Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Button onClick={handleSaveCategory} disabled={loading}>
-            {editingId ? "Update" : "Add"}
-          </Button>
-        </div>
-
-        {/* Category List */}
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <ul className="space-y-2">
-            {categories.map((cat: any) => (
-              <li
-                key={cat._id}
-                className="flex justify-between items-center border p-2 rounded"
-              >
-                <span>{cat.name}</span>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setName(cat.name);
-                      setEditingId(cat._id);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDeleteCategory(cat._id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
+          {/* Category List */}
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ul className="space-y-2">
+              {categories.map((cat: any) => (
+                <li
+                  key={cat._id}
+                  className="flex justify-between items-center border p-2 rounded"
+                >
+                  <span>{cat.name}</span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setName(cat.name);
+                        setEditingId(cat._id);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleDeleteCategory(cat._id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
     // <Card className="max-w-xl mx-auto">
     //   <CardHeader>
