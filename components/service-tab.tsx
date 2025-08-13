@@ -41,7 +41,7 @@ const ServicesTab = ({
   handleAddService,
   handleDeleteService,
 }: any) => {
-  const [categories, setCategories]: any = useState([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch categories on mount
@@ -58,14 +58,13 @@ const ServicesTab = ({
       );
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
-
+      // Assuming data is an array of category strings or objects with a name property
       if (Array.isArray(data)) {
-        // If each item has _id and name, keep both
-        if (data[0]?._id && data[0]?.name) {
-          setCategories(data.map((c: any) => ({ id: c._id, name: c.name })));
-        } else if (typeof data[0] === "string") {
-          // fallback to array of strings
-          setCategories(data.map((name: string) => ({ id: null, name })));
+        // If objects, map to strings, adjust if needed
+        if (typeof data[0] === "string") {
+          setCategories(data);
+        } else if (data[0]?.name) {
+          setCategories(data.map((c: any) => c.name));
         } else {
           setCategories([]);
         }
@@ -163,7 +162,7 @@ const ServicesTab = ({
               <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
                 <Select
-                  value={newService.category} // this should hold the category id
+                  value={newService.category}
                   onValueChange={(value) =>
                     setNewService({ ...newService, category: value })
                   }
@@ -173,25 +172,24 @@ const ServicesTab = ({
                   </SelectTrigger>
                   <SelectContent>
                     {loading && (
-                      <SelectItem disabled value="">
+                      <SelectItem disabled value={""}>
                         Loading...
                       </SelectItem>
                     )}
                     {!loading && categories.length === 0 && (
-                      <SelectItem disabled value="">
+                      <SelectItem disabled value={""}>
                         No categories
                       </SelectItem>
                     )}
                     {!loading &&
-                      categories.map((cat: any) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.name}
+                      categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
                         </SelectItem>
                       ))}
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="grid gap-2">
                 <Label htmlFor="description">Description (Optional)</Label>
                 <Textarea
