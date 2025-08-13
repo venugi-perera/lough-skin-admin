@@ -119,7 +119,7 @@ const DashboardTab = ({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${loadingBookings || loadingServices ? "..." : revenue.toFixed(2)}
+              £{loadingBookings || loadingServices ? "..." : revenue.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">
               Revenue from completed bookings

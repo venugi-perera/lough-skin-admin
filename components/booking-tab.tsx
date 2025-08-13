@@ -75,6 +75,7 @@ const BookingsTab = ({ bookings, updateBookingStatus }: any) => {
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Service</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Time</TableHead>
                 <TableHead>Phone</TableHead>
@@ -93,7 +94,8 @@ const BookingsTab = ({ bookings, updateBookingStatus }: any) => {
                       .map((service: any) => service.name)
                       .join(", ")}
                   </TableCell>
-
+                  <TableCell>£{booking.total.toFixed(2)}</TableCell>
+                  {/* Display price */}
                   <TableCell>
                     {formatAppointment(booking.appointmentDate)}
                   </TableCell>

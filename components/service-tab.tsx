@@ -146,7 +146,7 @@ const ServicesTab = ({
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="price">Price ($)</Label>
+                  <Label htmlFor="price">Price (£)</Label>
                   <Input
                     id="price"
                     type="number"
@@ -248,7 +248,7 @@ const ServicesTab = ({
                       Duration: {service.duration} min
                     </span>
                     <span className="text-sm font-medium">
-                      ${service.price}
+                      £{service.price}
                     </span>
                   </div>
                 </div>
