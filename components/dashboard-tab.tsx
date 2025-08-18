@@ -1,3 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Sidebar from "@/components/sidebar"; // <-- import sidebar
 import {
   Card,
   CardContent,
@@ -23,23 +28,41 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const DashboardTab = ({
-  bookings,
-  loadingBookings,
-  loadingServices,
-  services,
-}: any) => {
+export default function DashboardTab() {
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoadingBookings(true);
+      setLoadingServices(true);
+      try {
+        const [bookingsRes, servicesRes] = await Promise.all([
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`),
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/services`),
+        ]);
+        setBookings(bookingsRes.data.bookings);
+        setServices(servicesRes.data);
+        setError("");
+      } catch {
+        setError("Failed to load dashboard data.");
+      } finally {
+        setLoadingBookings(false);
+        setLoadingServices(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const todaysBookings = bookings.filter((b) => b.date === today).length;
 
-  // Count today's bookings
-  const todaysBookings = bookings.filter((b: any) => b.date === today).length;
-
-  // Sum revenue from completed bookings (assuming service price is known)
-  // If booking doesn't have price, sum services matching name
-
-  function calculateTotalRevenue(bookings: any) {
-    return bookings.reduce((sum: any, booking: any) => {
-      // Ensure booking has a total and is paid
+  const calculateTotalRevenue = (bookings: any) =>
+    bookings.reduce((sum: number, booking: any) => {
       if (
         booking.payment_status === "paid" &&
         typeof booking.total === "number"
@@ -48,146 +71,118 @@ const DashboardTab = ({
       }
       return sum;
     }, 0);
-  }
 
-  // Example usage:
   const revenue = calculateTotalRevenue(bookings);
-  console.log("Total Revenue:", revenue);
 
-  // let revenue = 0;
-  // bookings.forEach((b) => {
-  //   if (b.payment_status === "paid") {
-  //     const service = services.find((s) => s.name === b.service);
-  //     if (service) revenue += service.price;
-  //   }
-  // });
-
-  function formatAppointment(dateStr: any, timeStr: any) {
-    // Parse the date string into a Date object
+  const formatAppointment = (dateStr: string, timeStr: string) => {
     const date = new Date(dateStr);
-
-    // Format date to a readable form, e.g., August 12, 2025
     const formattedDate = date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-
-    // Return combined formatted string
     return `${formattedDate} — ${timeStr}`;
+  };
+
+  if (loadingBookings || loadingServices) {
+    return (
+      <div className="flex items-center justify-center flex-1 p-6">
+        <p className="text-lg text-muted-foreground">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center flex-1 p-6">
+        <p className="text-lg text-red-600">{error}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">
-          Welcome back! Here's what's happening at your salon.
-        </p>
-      </div>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar always open */}
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        sidebarOpen={true}
+        setSidebarOpen={() => {}}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Today's Bookings
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          {/* <CardContent>
-              <div className="text-2xl font-bold">
-                {loadingBookings ? "..." : todaysBookings}
-              </div>
+      {/* Dashboard Content */}
+      <div className="flex-1 space-y-6 p-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">
+            Welcome back! Here's what's happening at your salon.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Today's Bookings
+              </CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{todaysBookings}</div>
               <p className="text-xs text-muted-foreground">
                 Bookings scheduled for today
               </p>
-            </CardContent> */}
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loadingBookings ? "..." : todaysBookings}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Bookings scheduled for today
-            </p>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              £{loadingBookings || loadingServices ? "..." : revenue.toFixed(2)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Revenue from completed bookings
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Services
-            </CardTitle>
-            <Scissors className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loadingServices ? "..." : services.length}
-            </div>
-            <p className="text-xs text-muted-foreground">Available services</p>
-          </CardContent>
-        </Card>
-
-        {/* <Card>
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Customers</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">248</div>
+              <div className="text-2xl font-bold">£{revenue.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">
-                Total customers (static)
+                Revenue from completed bookings
               </p>
             </CardContent>
-          </Card> */}
-      </div>
+          </Card>
 
-      {/* Recent bookings */}
-      <div className="grid gap-4 ">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Bookings</CardTitle>
-            <CardDescription>Latest appointments scheduled</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {loadingBookings ? (
-                <p>Loading bookings...</p>
-              ) : bookings.length === 0 ? (
-                <p>No bookings found.</p>
-              ) : (
-                bookings.slice(0, 4).map((booking: any) => (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Active Services
+              </CardTitle>
+              <Scissors className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{services.length}</div>
+              <p className="text-xs text-muted-foreground">
+                Available services
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Bookings</CardTitle>
+              <CardDescription>Latest appointments scheduled</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {bookings.slice(0, 4).map((booking) => (
                   <div
                     key={booking._id}
                     className="flex items-center space-x-4"
                   >
-                    {/* <Avatar>
-                        <AvatarFallback>
-                          {booking.customerDetails.name}
-                        </AvatarFallback>
-                      </Avatar> */}
                     <div className="flex-1 space-y-1">
                       <p className="text-sm font-medium">
                         {booking.customerDetails.name}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {booking.services
-                          .map((service: any) => service.name)
-                          .join(", ")}
+                        {booking.services.map((s: any) => s.name).join(", ")}
                       </p>
                     </div>
                     <div className="text-right">
@@ -202,50 +197,12 @@ const DashboardTab = ({
                       </Badge>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* <Card>
-            <CardHeader>
-              <CardTitle>Popular Services</CardTitle>
-              <CardDescription>Most booked services this month</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loadingServices ? (
-                <p>Loading services...</p>
-              ) : services.length === 0 ? (
-                <p>No services found.</p>
-              ) : (
-                <div className="space-y-4">
-                  {services.slice(0, 4).map((service) => (
-                    <div
-                      key={service._id}
-                      className="flex items-center justify-between"
-                    >
-                      <div>
-                        <p className="text-sm font-medium">{service.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {service.category}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium">${service.price}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {service.duration} min
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                ))}
+              </div>
             </CardContent>
-          </Card> */}
+          </Card>
+        </div>
       </div>
     </div>
   );
-};
-
-export default DashboardTab;
+}

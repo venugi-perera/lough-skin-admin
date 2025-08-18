@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Sidebar from "./sidebar";
 
 export default function CategoryPanel() {
+  const [activeTab, setActiveTab] = useState("categories");
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -90,65 +92,73 @@ export default function CategoryPanel() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">
-            Manage Categories
-          </h2>
-          <p className="text-muted-foreground">
-            Manage Categories - Create, edit, and delete service categories
-          </p>
-        </div>
-      </div>
-      <Card className="pt-6">
-        <CardContent>
-          {/* Input for new/edit category */}
-          <div className="flex gap-2 mb-4">
-            <Input
-              placeholder="Category Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <Button onClick={handleSaveCategory} disabled={loading}>
-              {editingId ? "Update" : "Add"}
-            </Button>
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        sidebarOpen={true}
+        setSidebarOpen={() => {}}
+      />
+      <div className="flex-1 space-y-6 p-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Manage Categories
+            </h2>
+            <p className="text-muted-foreground">
+              Manage Categories - Create, edit, and delete service categories
+            </p>
           </div>
+        </div>
+        <Card className="pt-6">
+          <CardContent>
+            {/* Input for new/edit category */}
+            <div className="flex gap-2 mb-4">
+              <Input
+                placeholder="Category Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Button onClick={handleSaveCategory} disabled={loading}>
+                {editingId ? "Update" : "Add"}
+              </Button>
+            </div>
 
-          {/* Category List */}
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <ul className="space-y-2">
-              {categories.map((cat: any) => (
-                <li
-                  key={cat._id}
-                  className="flex justify-between items-center border p-2 rounded"
-                >
-                  <span>{cat.name}</span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setName(cat.name);
-                        setEditingId(cat._id);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDeleteCategory(cat._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+            {/* Category List */}
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <ul className="space-y-2">
+                {categories.map((cat: any) => (
+                  <li
+                    key={cat._id}
+                    className="flex justify-between items-center border p-2 rounded"
+                  >
+                    <span>{cat.name}</span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setName(cat.name);
+                          setEditingId(cat._id);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDeleteCategory(cat._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
     // <Card className="max-w-xl mx-auto">
     //   <CardHeader>

@@ -16,10 +16,10 @@ import { Eye, EyeOff, Scissors } from "lucide-react";
 import SignupPage from "@/components/signup-page";
 
 interface LoginPageProps {
-  onLogin: any;
+  setIsLoggedIn: any;
 }
 
-export default function LoginPage({ onLogin }: LoginPageProps) {
+export default function LoginPage({ setIsLoggedIn }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,10 +51,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       }
 
       // Save token and call parent handler
-      onLogin(data.token);
+      setIsLoggedIn(true);
+      localStorage.setItem("token", data.token);
 
       // Optional: navigate to a route (your SalonApp already shows dashboard dynamically)
-      // router.push("/admin");
+      router.push("/admin");
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again.");
