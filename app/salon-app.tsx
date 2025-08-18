@@ -74,12 +74,12 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
+          {/* <div className="flex justify-center mb-4">
             <div className="p-3 bg-pink-100 rounded-full">
               <Scissors className="h-8 w-8 text-pink-600" />
             </div>
-          </div>
-          <CardTitle className="text-2xl font-bold">Salon Admin</CardTitle>
+          </div> */}
+          <CardTitle className="text-2xl font-bold">Lough Skin</CardTitle>
           <CardDescription>Sign in to manage your salon</CardDescription>
         </CardHeader>
         <CardContent>
