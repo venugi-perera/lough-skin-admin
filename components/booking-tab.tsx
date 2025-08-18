@@ -83,14 +83,6 @@ export default function BookingsTab() {
     });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center flex-1 p-6">
-        <p className="text-lg text-muted-foreground">Loading bookings...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="flex items-center justify-center flex-1 p-6">
@@ -125,79 +117,85 @@ export default function BookingsTab() {
               View and manage customer appointments
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Service</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bookings.map((booking) => (
-                  <TableRow key={booking._id}>
-                    <TableCell className="font-medium">
-                      {booking.customerDetails.name}
-                    </TableCell>
-                    <TableCell>
-                      {booking.services.map((s: any) => s.name).join(", ")}
-                    </TableCell>
-                    <TableCell>£{booking.total.toFixed(2)}</TableCell>
-                    <TableCell>
-                      {formatAppointment(booking.appointmentDate)}
-                    </TableCell>
-                    <TableCell>{booking.appointmentTime}</TableCell>
-                    <TableCell>{booking.customerDetails.phone}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(booking.status)}>
-                        {booking.payment_status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {booking.status === "pending" && (
-                          <Button
-                            size="sm"
-                            onClick={() =>
-                              updateBookingStatus(booking._id, "confirmed")
-                            }
-                          >
-                            Confirm
-                          </Button>
-                        )}
-                        {booking.status === "confirmed" && (
+          {loading ? (
+            <div className="flex-1 space-y-2">
+              <p>Loading...</p>
+            </div>
+          ) : (
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Service</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {bookings.map((booking) => (
+                    <TableRow key={booking._id}>
+                      <TableCell className="font-medium">
+                        {booking.customerDetails.name}
+                      </TableCell>
+                      <TableCell>
+                        {booking.services.map((s: any) => s.name).join(", ")}
+                      </TableCell>
+                      <TableCell>£{booking.total.toFixed(2)}</TableCell>
+                      <TableCell>
+                        {formatAppointment(booking.appointmentDate)}
+                      </TableCell>
+                      <TableCell>{booking.appointmentTime}</TableCell>
+                      <TableCell>{booking.customerDetails.phone}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(booking.status)}>
+                          {booking.payment_status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {booking.status === "pending" && (
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                updateBookingStatus(booking._id, "confirmed")
+                              }
+                            >
+                              Confirm
+                            </Button>
+                          )}
+                          {booking.status === "confirmed" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                updateBookingStatus(booking._id, "completed")
+                              }
+                            >
+                              Complete
+                            </Button>
+                          )}
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              updateBookingStatus(booking._id, "completed")
+                              updateBookingStatus(booking._id, "cancelled")
                             }
                           >
-                            Complete
+                            Cancel
                           </Button>
-                        )}
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() =>
-                            updateBookingStatus(booking._id, "cancelled")
-                          }
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          )}
         </Card>
       </div>
     </div>

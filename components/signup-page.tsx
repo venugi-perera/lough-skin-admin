@@ -78,18 +78,21 @@ export default function SignupPage({
     if (validateForm()) {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:8000/api/users/signUp", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            password: formData.password,
-            imageUrl: "", // optional
-          }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/signUp`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: `${formData.firstName} ${formData.lastName}`,
+              email: formData.email,
+              password: formData.password,
+              imageUrl: "", // optional
+            }),
+          }
+        );
 
         const data = await response.json();
 

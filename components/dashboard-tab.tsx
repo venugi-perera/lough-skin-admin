@@ -84,14 +84,6 @@ export default function DashboardTab() {
     return `${formattedDate} — ${timeStr}`;
   };
 
-  if (loadingBookings || loadingServices) {
-    return (
-      <div className="flex items-center justify-center flex-1 p-6">
-        <p className="text-lg text-muted-foreground">Loading dashboard...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="flex items-center justify-center flex-1 p-6">
@@ -111,98 +103,106 @@ export default function DashboardTab() {
       />
 
       {/* Dashboard Content */}
-      <div className="flex-1 space-y-6 p-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
-            Welcome back! Here's what's happening at your salon.
-          </p>
+      {loadingBookings || loadingServices ? (
+        <div className="flex items-center justify-center flex-1 p-6">
+          <p className="text-lg text-muted-foreground">Loading dashboard...</p>
         </div>
+      ) : (
+        <div className="flex-1 space-y-6 p-6">
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <p className="text-muted-foreground">
+              Welcome back! Here's what's happening at your salon.
+            </p>
+          </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Today's Bookings
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{todaysBookings}</div>
-              <p className="text-xs text-muted-foreground">
-                Bookings scheduled for today
-              </p>
-            </CardContent>
-          </Card>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Today's Bookings
+                </CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{todaysBookings}</div>
+                <p className="text-xs text-muted-foreground">
+                  Bookings scheduled for today
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">£{revenue.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">
-                Revenue from completed bookings
-              </p>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">£{revenue.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground">
+                  Revenue from completed bookings
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Services
-              </CardTitle>
-              <Scissors className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{services.length}</div>
-              <p className="text-xs text-muted-foreground">
-                Available services
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Active Services
+                </CardTitle>
+                <Scissors className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{services.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  Available services
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
-        <div className="grid gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Bookings</CardTitle>
-              <CardDescription>Latest appointments scheduled</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {bookings.slice(0, 4).map((booking) => (
-                  <div
-                    key={booking._id}
-                    className="flex items-center space-x-4"
-                  >
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium">
-                        {booking.customerDetails.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {booking.services.map((s: any) => s.name).join(", ")}
-                      </p>
+          <div className="grid gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Bookings</CardTitle>
+                <CardDescription>Latest appointments scheduled</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {bookings.slice(0, 4).map((booking) => (
+                    <div
+                      key={booking._id}
+                      className="flex items-center space-x-4"
+                    >
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">
+                          {booking.customerDetails.name}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {booking.services.map((s: any) => s.name).join(", ")}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">
+                          {formatAppointment(
+                            booking.appointmentDate,
+                            booking.appointmentTime
+                          )}
+                        </p>
+                        <Badge
+                          className={getStatusColor(booking.payment_status)}
+                        >
+                          {booking.payment_status}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        {formatAppointment(
-                          booking.appointmentDate,
-                          booking.appointmentTime
-                        )}
-                      </p>
-                      <Badge className={getStatusColor(booking.payment_status)}>
-                        {booking.payment_status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
