@@ -3,22 +3,27 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Sidebar from "./sidebar";
+
+interface Category {
+  _id: string;
+  name: string;
+  description?: string;
+}
 
 export default function CategoryPanel() {
   const [activeTab, setActiveTab] = useState("categories");
-  const [categories, setCategories] = useState([]);
-  const [name, setName] = useState("");
-  const [editingId, setEditingId] = useState(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [payload, setPayload] = useState<{ name?: string; desc?: string }>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch categories when component loads
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // GET categories from backend
+  // Fetch categories safely
   const fetchCategories = async () => {
     try {
       setLoading(true);
@@ -27,42 +32,47 @@ export default function CategoryPanel() {
       );
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
-      setCategories(data);
+      console.log(data);
+
+      // Ensure it's an array
+      setCategories(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching categories:", err);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // CREATE or UPDATE category
+  // Save or update category
   const handleSaveCategory = async () => {
-    if (!name.trim()) return alert("Category name cannot be empty");
+    if (!payload.name?.trim()) return alert("Category name cannot be empty");
 
     try {
       setLoading(true);
       let res;
+      const body = { name: payload.name, description: payload.desc || "" };
+
       if (editingId) {
-        // UPDATE existing
         res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${editingId}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify(body),
           }
         );
       } else {
-        // CREATE new
         res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name }),
+          body: JSON.stringify(body),
         });
       }
+
       if (!res.ok) throw new Error("Failed to save category");
-      await fetchCategories(); // Refresh after save
-      setName("");
+      await fetchCategories();
+      setPayload({});
       setEditingId(null);
     } catch (err) {
       console.error("Error saving category:", err);
@@ -71,8 +81,8 @@ export default function CategoryPanel() {
     }
   };
 
-  // DELETE category
-  const handleDeleteCategory = async (id: any) => {
+  // Delete category
+  const handleDeleteCategory = async (id: string) => {
     if (!confirm("Are you sure you want to delete this category?")) return;
     try {
       setLoading(true);
@@ -110,26 +120,38 @@ export default function CategoryPanel() {
             </p>
           </div>
         </div>
+
         <Card className="pt-6">
           <CardContent>
-            {/* Input for new/edit category */}
+            {/* Input fields */}
             <div className="flex gap-2 mb-4">
               <Input
                 placeholder="Category Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={payload.name || ""}
+                onChange={(e) =>
+                  setPayload({ ...payload, name: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Category Description"
+                value={payload.desc || ""}
+                onChange={(e) =>
+                  setPayload({ ...payload, desc: e.target.value })
+                }
               />
               <Button onClick={handleSaveCategory} disabled={loading}>
                 {editingId ? "Update" : "Add"}
               </Button>
             </div>
 
-            {/* Category List */}
+            {/* Category list */}
             {loading ? (
               <p>Loading...</p>
+            ) : categories.length === 0 ? (
+              <p className="text-gray-500 italic">No data found</p>
             ) : (
               <ul className="space-y-2">
-                {categories.map((cat: any) => (
+                {categories.map((cat) => (
                   <li
                     key={cat._id}
                     className="flex justify-between items-center border p-2 rounded"
@@ -139,7 +161,10 @@ export default function CategoryPanel() {
                       <Button
                         variant="outline"
                         onClick={() => {
-                          setName(cat.name);
+                          setPayload({
+                            name: cat.name || "",
+                            desc: cat.description || "",
+                          });
                           setEditingId(cat._id);
                         }}
                       >
@@ -160,56 +185,5 @@ export default function CategoryPanel() {
         </Card>
       </div>
     </div>
-    // <Card className="max-w-xl mx-auto">
-    //   <CardHeader>
-    //     <CardTitle>Manage Categories</CardTitle>
-    //   </CardHeader>
-    //   <CardContent>
-    //     {/* Input for new/edit category */}
-    //     <div className="flex gap-2 mb-4">
-    //       <Input
-    //         placeholder="Category Name"
-    //         value={name}
-    //         onChange={(e) => setName(e.target.value)}
-    //       />
-    //       <Button onClick={handleSaveCategory} disabled={loading}>
-    //         {editingId ? "Update" : "Add"}
-    //       </Button>
-    //     </div>
-
-    //     {/* Category List */}
-    //     {loading ? (
-    //       <p>Loading...</p>
-    //     ) : (
-    //       <ul className="space-y-2">
-    //         {categories.map((cat: any) => (
-    //           <li
-    //             key={cat.id}
-    //             className="flex justify-between items-center border p-2 rounded"
-    //           >
-    //             <span>{cat.name}</span>
-    //             <div className="flex gap-2">
-    //               <Button
-    //                 variant="outline"
-    //                 onClick={() => {
-    //                   setName(cat.name);
-    //                   setEditingId(cat.id);
-    //                 }}
-    //               >
-    //                 Edit
-    //               </Button>
-    //               <Button
-    //                 variant="destructive"
-    //                 onClick={() => handleDeleteCategory(cat.id)}
-    //               >
-    //                 Delete
-    //               </Button>
-    //             </div>
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     )}
-    //   </CardContent>
-    // </Card>
   );
 }
