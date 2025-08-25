@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Scissors } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import SignupPage from "@/components/signup-page";
 
 interface LoginPageProps {
@@ -52,9 +52,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
       // Save token and call parent handler
       onLogin(data.token);
-
-      // Optional: navigate to a route (your SalonApp already shows dashboard dynamically)
-      // router.push("/admin");
     } catch (err) {
       console.error(err);
       setError("Something went wrong. Please try again.");
@@ -71,21 +68,22 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e1c9b3] to-[#a67c5b]/40 p-4">
+      <Card className="w-full max-w-md border border-[#a67c5b]/30 shadow-lg">
         <CardHeader className="space-y-1 text-center">
-          {/* <div className="flex justify-center mb-4">
-            <div className="p-3 bg-pink-100 rounded-full">
-              <Scissors className="h-8 w-8 text-pink-600" />
-            </div>
-          </div> */}
-          <CardTitle className="text-2xl font-bold">Lough Skin</CardTitle>
-          <CardDescription>Sign in to manage your salon</CardDescription>
+          <CardTitle className="text-2xl font-bold text-[#a67c5b]">
+            Lough Skin
+          </CardTitle>
+          <CardDescription className="text-[#4b3a2f]">
+            Sign in to manage your salon
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleFormSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-[#4b3a2f]">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -93,10 +91,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-[#4b3a2f]">
+                Password
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -105,12 +106,13 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-[#a67c5b]"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -123,7 +125,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             </div>
             <Button
               type="submit"
-              className="w-full bg-pink-600 hover:bg-pink-700"
+              className="w-full bg-[#a67c5b] hover:bg-[#8c674b] text-white"
             >
               Sign In
             </Button>
@@ -136,14 +138,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               Don't have an account?{" "}
               <Button
                 variant="link"
-                className="p-0 h-auto text-pink-600 hover:text-pink-700"
+                className="p-0 h-auto text-[#a67c5b] hover:text-[#8c674b]"
                 onClick={() => setIsSignup(true)}
               >
                 Create account
               </Button>
             </p>
           </div>
-          <div className="mt-2 text-center text-sm text-muted-foreground">
+          <div className="mt-2 text-center text-sm text-gray-500">
             Demo credentials: admin@salon.com / password
           </div>
         </CardContent>
@@ -151,5 +153,3 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     </div>
   );
 }
-
-// export default LoginPage;

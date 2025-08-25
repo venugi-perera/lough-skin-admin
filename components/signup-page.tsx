@@ -41,20 +41,15 @@ export default function SignupPage({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName.trim()) {
+    if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
-    }
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    }
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
@@ -82,27 +77,21 @@ export default function SignupPage({
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/signUp`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               name: `${formData.firstName} ${formData.lastName}`,
               email: formData.email,
               password: formData.password,
-              imageUrl: "", // optional
+              imageUrl: "",
             }),
           }
         );
 
         const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.message || "Signup failed");
-        }
+        if (!response.ok) throw new Error(data.message || "Signup failed");
 
-        // Store token for later use
         localStorage.setItem("token", data.token);
-
         onSignup();
       } catch (err: any) {
         setApiError(err.message);
@@ -120,29 +109,29 @@ export default function SignupPage({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-      <Card className="w-full max-w-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e1c9b3] to-[#a67c5b]/30 p-4">
+      <Card className="w-full max-w-lg border border-[#a67c5b]/30 shadow-lg">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="icon"
               onClick={onBackToLogin}
-              className="h-8 w-8"
+              className="h-8 w-8 text-[#a67c5b]"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="flex justify-center">
-              <div className="p-3 bg-pink-100 rounded-full">
-                <Scissors className="h-8 w-8 text-pink-600" />
+            {/* <div className="flex justify-center">
+              <div className="p-3 bg-[#e1c9b3] rounded-full">
+                <Scissors className="h-8 w-8 text-[#a67c5b]" />
               </div>
-            </div>
+            </div> */}
             <div className="w-8" />
           </div>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-[#a67c5b]">
             Create Account
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-[#4b3a2f]">
             Set up your salon admin account
           </CardDescription>
         </CardHeader>
@@ -155,7 +144,7 @@ export default function SignupPage({
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <div className="h-px bg-border flex-1" />
-                <span className="text-sm text-muted-foreground px-2">
+                <span className="text-sm text-[#a67c5b] px-2">
                   Personal Information
                 </span>
                 <div className="h-px bg-border flex-1" />
@@ -163,7 +152,9 @@ export default function SignupPage({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName" className="text-[#4b3a2f]">
+                    First Name
+                  </Label>
                   <Input
                     id="firstName"
                     type="text"
@@ -172,14 +163,20 @@ export default function SignupPage({
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
                     }
-                    className={errors.firstName ? "border-red-500" : ""}
+                    className={`${
+                      errors.firstName
+                        ? "border-red-500"
+                        : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                    }`}
                   />
                   {errors.firstName && (
                     <p className="text-sm text-red-500">{errors.firstName}</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName" className="text-[#4b3a2f]">
+                    Last Name
+                  </Label>
                   <Input
                     id="lastName"
                     type="text"
@@ -188,7 +185,11 @@ export default function SignupPage({
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
                     }
-                    className={errors.lastName ? "border-red-500" : ""}
+                    className={`${
+                      errors.lastName
+                        ? "border-red-500"
+                        : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                    }`}
                   />
                   {errors.lastName && (
                     <p className="text-sm text-red-500">{errors.lastName}</p>
@@ -197,14 +198,20 @@ export default function SignupPage({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-[#4b3a2f]">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="john@example.com"
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  className={errors.email ? "border-red-500" : ""}
+                  className={`${
+                    errors.email
+                      ? "border-red-500"
+                      : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                  }`}
                 />
                 {errors.email && (
                   <p className="text-sm text-red-500">{errors.email}</p>
@@ -212,14 +219,20 @@ export default function SignupPage({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone" className="text-[#4b3a2f]">
+                  Phone Number
+                </Label>
                 <Input
                   id="phone"
                   type="tel"
                   placeholder="(555) 123-4567"
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className={errors.phone ? "border-red-500" : ""}
+                  className={`${
+                    errors.phone
+                      ? "border-red-500"
+                      : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                  }`}
                 />
                 {errors.phone && (
                   <p className="text-sm text-red-500">{errors.phone}</p>
@@ -231,14 +244,14 @@ export default function SignupPage({
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <div className="h-px bg-border flex-1" />
-                <span className="text-sm text-muted-foreground px-2">
-                  Security
-                </span>
+                <span className="text-sm text-[#a67c5b] px-2">Security</span>
                 <div className="h-px bg-border flex-1" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-[#4b3a2f]">
+                  Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -248,13 +261,17 @@ export default function SignupPage({
                     onChange={(e) =>
                       handleInputChange("password", e.target.value)
                     }
-                    className={errors.password ? "border-red-500" : ""}
+                    className={`${
+                      errors.password
+                        ? "border-red-500"
+                        : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                    }`}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-[#a67c5b]"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -270,7 +287,9 @@ export default function SignupPage({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-[#4b3a2f]">
+                  Confirm Password
+                </Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -280,13 +299,17 @@ export default function SignupPage({
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
                     }
-                    className={errors.confirmPassword ? "border-red-500" : ""}
+                    className={`${
+                      errors.confirmPassword
+                        ? "border-red-500"
+                        : "border-[#a67c5b]/40 focus:border-[#a67c5b] focus:ring-[#a67c5b]"
+                    }`}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-[#a67c5b]"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -314,7 +337,7 @@ export default function SignupPage({
                   }
                   className={`flex items-center justify-center w-4 h-4 mt-0.5 border rounded ${
                     formData.agreeToTerms
-                      ? "bg-pink-600 border-pink-600 text-white"
+                      ? "bg-[#a67c5b] border-[#a67c5b] text-white"
                       : "border-gray-300"
                   }`}
                 >
@@ -325,14 +348,14 @@ export default function SignupPage({
                     I agree to the{" "}
                     <Button
                       variant="link"
-                      className="p-0 h-auto text-pink-600 hover:text-pink-700"
+                      className="p-0 h-auto text-[#a67c5b] hover:text-[#8c674b]"
                     >
                       Terms of Service
                     </Button>{" "}
                     and{" "}
                     <Button
                       variant="link"
-                      className="p-0 h-auto text-pink-600 hover:text-pink-700"
+                      className="p-0 h-auto text-[#a67c5b] hover:text-[#8c674b]"
                     >
                       Privacy Policy
                     </Button>
@@ -346,7 +369,7 @@ export default function SignupPage({
 
             <Button
               type="submit"
-              className="w-full bg-pink-600 hover:bg-pink-700"
+              className="w-full bg-[#a67c5b] hover:bg-[#8c674b] text-white"
               disabled={loading}
             >
               {loading ? "Creating..." : "Create Account"}
@@ -358,7 +381,7 @@ export default function SignupPage({
               Already have an account?{" "}
               <Button
                 variant="link"
-                className="p-0 h-auto text-pink-600 hover:text-pink-700"
+                className="p-0 h-auto text-[#a67c5b] hover:text-[#8c674b]"
                 onClick={onBackToLogin}
               >
                 Sign in

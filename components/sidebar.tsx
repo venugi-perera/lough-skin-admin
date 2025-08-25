@@ -3,14 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  LogOut,
-  Calendar,
-  Scissors,
-  Clock,
-  Users,
-  Settings,
-} from "lucide-react";
+import { LogOut, Calendar, Scissors, Clock, Users } from "lucide-react";
 
 const sidebarItems = [
   {
@@ -32,7 +25,6 @@ const sidebarItems = [
     icon: Users,
     path: "/admin/categories",
   },
-  // { id: "settings", label: "Settings", icon: Settings, path: "/admin/settings" },
 ];
 
 interface SidebarProps {
@@ -40,7 +32,6 @@ interface SidebarProps {
   setActiveTab: (tab: string) => void;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-  // setIsLoggedIn: any;
 }
 
 export default function Sidebar({
@@ -48,8 +39,7 @@ export default function Sidebar({
   setActiveTab,
   sidebarOpen,
   setSidebarOpen,
-}: // setIsLoggedIn,
-SidebarProps) {
+}: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -60,7 +50,6 @@ SidebarProps) {
   }, [pathname, setActiveTab]);
 
   const onLogout = () => {
-    // setIsLoggedIn(false);
     localStorage.removeItem("token");
     router.push("/"); // redirect to home page
   };
@@ -69,15 +58,15 @@ SidebarProps) {
     <div
       className={`${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
+      } fixed inset-y-0 left-0 z-50 w-64 bg-[#e1c9b3] shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}
     >
       {/* Logo / Header */}
-      <div className="flex items-center justify-between h-16 px-6 border-b">
-        <span className="text-xl font-bold">Lough Skin</span>
+      <div className="flex items-center justify-between h-16 px-6 border-b border-[#a67c5b]/40">
+        <span className="text-xl font-bold text-[#a67c5b]">Lough Skin</span>
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden"
+          className="lg:hidden text-[#a67c5b]"
           onClick={() => setSidebarOpen(false)}
         >
           ✕
@@ -96,10 +85,10 @@ SidebarProps) {
                 setSidebarOpen(false);
                 router.push(item.path);
               }}
-              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-50 ${
+              className={`w-full flex items-center px-6 py-3 text-left transition-colors ${
                 activeTab === item.id
-                  ? "bg-pink-50 text-pink-600 border-r-2 border-pink-600"
-                  : "text-gray-700"
+                  ? "bg-[#a67c5b] text-white border-r-4 border-white"
+                  : "text-[#4b3a2f] hover:bg-[#a67c5b]/20"
               }`}
             >
               <Icon className="h-5 w-5 mr-3" />
@@ -110,8 +99,11 @@ SidebarProps) {
       </nav>
 
       {/* Logout Button */}
-      <div className="absolute bottom-0 w-full p-6 border-t">
-        <Button variant="outline" className="w-full" onClick={() => onLogout()}>
+      <div className="absolute bottom-0 w-full p-6 border-t border-[#a67c5b]/40">
+        <Button
+          className="w-full bg-[#a67c5b] text-white hover:bg-[#8c674b]"
+          onClick={() => onLogout()}
+        >
           <LogOut className="h-4 w-4 mr-2" /> Logout
         </Button>
       </div>
