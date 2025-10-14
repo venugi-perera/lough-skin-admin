@@ -40,6 +40,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // ✅ include cookies/session
         body: JSON.stringify({ email, password }),
       });
 
