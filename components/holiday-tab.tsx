@@ -13,7 +13,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Label } from "recharts";
-import { useToast } from "./ui/use-toast";
+import { toast } from "sonner";
+
 import { format } from "date-fns";
 
 interface Holiday {
@@ -38,36 +39,16 @@ export default function HolidayPanel() {
     { _id?: string; user: string; date: string }[]
   >([]);
 
-  const { toast } = useToast();
+  //   const { toast } = useToast();
   // ✅ Fetch holidays on load
   useEffect(() => {
     // fetchHolidays();
   }, []);
 
-  //   const fetchHolidays = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/api/holidays`
-  //       );
-  //       if (!res.ok) throw new Error("Failed to fetch holidays");
-  //       const data = await res.json();
-  //       setHolidays(Array.isArray(data) ? data : []);
-  //     } catch (err) {
-  //       console.error("Error fetching holidays:", err);
-  //       setHolidays([]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  // ✅ Add or Update Holiday
   const handleSaveHoliday = async () => {
     if (!selectedDate) {
-      toast({
-        title: "Missing information",
+      toast.error("Missing information", {
         description: "Please select user and date before applying leave.",
-        variant: "destructive",
       });
       return;
     }
@@ -90,8 +71,7 @@ export default function HolidayPanel() {
       const data = await res.json();
 
       if (res.ok) {
-        toast({
-          title: "Leave Applied ✅",
+        toast.success("Leave Applied ✅", {
           description: `${selectedUser} applied leave on ${selectedDate}`,
         });
         setLeaves((prev) => [
@@ -101,44 +81,19 @@ export default function HolidayPanel() {
         setSelectedUser("");
         setSelectedDate("");
       } else {
-        toast({
-          title: "Failed to apply leave",
+        toast.error("Failed to apply leave", {
           description: data.error || "Something went wrong.",
-          variant: "destructive",
         });
       }
     } catch (err) {
       console.error(err);
-      toast({
-        title: "Network error",
+      toast.error("Network error", {
         description: "Failed to connect to the server.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
-
-  // ✅ Delete Holiday
-  //   const handleDeleteHoliday = async (id: string) => {
-  //     if (!confirm("Are you sure you want to delete this holiday?")) return;
-
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/api/holidays/${id}`,
-  //         {
-  //           method: "DELETE",
-  //         }
-  //       );
-  //       if (!res.ok) throw new Error("Failed to delete holiday");
-  //       await fetchHolidays();
-  //     } catch (err) {
-  //       console.error("Error deleting holiday:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -196,51 +151,6 @@ export default function HolidayPanel() {
                 {editingId ? "Update" : "Add"}
               </Button>
             </div>
-
-            {/* Holiday list */}
-            {/* {loading ? (
-              <p>Loading...</p>
-            ) : holidays.length === 0 ? (
-              <p className="text-gray-500 italic">No holidays found</p>
-            ) : ( */}
-            {/* <ul className="space-y-2">
-                {holidays.map((holiday) => (
-                  <li
-                    key={holiday._id}
-                    className="flex justify-between items-center border p-2 rounded"
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-semibold">{holiday.name}</span>
-                      <span className="text-sm text-gray-500">
-                        📅 {holiday.date}{" "}
-                        {holiday.description ? `– ${holiday.description}` : ""}
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setPayload({
-                            name: holiday.name,
-                            date: holiday.date,
-                            desc: holiday.description || "",
-                          });
-                          setEditingId(holiday._id);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleDeleteHoliday(holiday._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )} */}
           </CardContent>
         </Card>
       </div>
