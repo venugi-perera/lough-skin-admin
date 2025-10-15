@@ -59,14 +59,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
     }
   };
 
-  if (isSignup) {
-    return (
-      <SignupPage
-        onSignup={() => {}}
-        onBackToLogin={() => setIsSignup(false)}
-      />
-    );
-  }
+  // if (isSignup) {
+  //   return (
+  //     <SignupPage
+  //       onSignup={() => {}}
+  //       onBackToLogin={() => setIsSignup(false)}
+  //     />
+  //   );
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e1c9b3] to-[#a67c5b]/40 p-4">
@@ -134,7 +134,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {error && (
             <p className="mt-2 text-sm text-red-600 text-center">{error}</p>
           )}
-          <div className="mt-4 text-center">
+          {/* <div className="mt-4 text-center">
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Button
@@ -148,7 +148,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           </div>
           <div className="mt-2 text-center text-sm text-gray-500">
             Demo credentials: admin@salon.com / password
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>

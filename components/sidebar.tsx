@@ -31,6 +31,12 @@ const sidebarItems = [
     icon: Users,
     path: "/admin/holiday",
   },
+  {
+    id: "user-managment",
+    label: "User Managment",
+    icon: Users,
+    path: "/admin/user",
+  },
 ];
 
 interface SidebarProps {
