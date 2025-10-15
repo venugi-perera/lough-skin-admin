@@ -185,15 +185,19 @@ export default function ServicesTab() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Sidebar - fixed height */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         sidebarOpen={true}
         setSidebarOpen={() => {}}
       />
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex justify-between items-center">
+
+      {/* Main content - scrollable */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Header Section (fixed at top) */}
+        <div className="flex justify-between items-center p-6 ">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">Services</h2>
             <p className="text-muted-foreground">
@@ -234,7 +238,7 @@ export default function ServicesTab() {
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Service Name</Label>
                   <Input
@@ -346,60 +350,65 @@ export default function ServicesTab() {
           </Dialog>
         </div>
 
-        {error && <p className="text-red-600">{error}</p>}
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {error && <p className="text-red-600 mb-4">{error}</p>}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>All Services</CardTitle>
-            <CardDescription>
-              Manage your salon's service offerings
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {services.map((service) => (
-                <div
-                  key={service._id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{service.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {service.category}
-                    </p>
-                    <div className="flex items-center space-x-4 mt-2">
-                      <span className="text-sm">
-                        Duration: {service.duration} min
-                      </span>
-                      <span className="text-sm font-medium">
-                        £{service.price}
-                      </span>
+          <Card>
+            <CardHeader>
+              <CardTitle>All Services</CardTitle>
+              <CardDescription>
+                Manage your salon's service offerings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {services.map((service) => (
+                  <div
+                    key={service._id}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-white"
+                  >
+                    <div className="flex-1">
+                      <h3 className="font-semibold">{service.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {service.category}
+                      </p>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <span className="text-sm">
+                          Duration: {service.duration} min
+                        </span>
+                        <span className="text-sm font-medium">
+                          £{service.price}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditService(service)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteService(service._id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditService(service)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteService(service._id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              {services.length === 0 && (
-                <p className="text-muted-foreground">No services available.</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+                {services.length === 0 && (
+                  <p className="text-muted-foreground">
+                    No services available.
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

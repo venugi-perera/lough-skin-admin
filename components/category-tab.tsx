@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import Sidebar from "./sidebar";
+import { Edit, Trash2 } from "lucide-react";
 
 interface Category {
   _id: string;
@@ -32,9 +33,6 @@ export default function CategoryPanel() {
       );
       if (!res.ok) throw new Error("Failed to fetch categories");
       const data = await res.json();
-      console.log(data);
-
-      // Ensure it's an array
       setCategories(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -102,87 +100,103 @@ export default function CategoryPanel() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Sidebar stays fixed */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         sidebarOpen={true}
         setSidebarOpen={() => {}}
       />
-      <div className="flex-1 space-y-6 p-6">
-        <div className="flex justify-between items-center">
+
+      {/* Main area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        {/* Fixed Header */}
+        <div className="flex justify-between items-center p-6 ">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
               Manage Categories
             </h2>
             <p className="text-muted-foreground">
-              Manage Categories - Create, edit, and delete service categories
+              Create, edit, and delete service categories
             </p>
           </div>
         </div>
 
-        <Card className="pt-6">
-          <CardContent>
-            {/* Input fields */}
-            <div className="flex gap-2 mb-4">
-              <Input
-                placeholder="Category Name"
-                value={payload.name || ""}
-                onChange={(e) =>
-                  setPayload({ ...payload, name: e.target.value })
-                }
-              />
-              <Input
-                placeholder="Category Description"
-                value={payload.desc || ""}
-                onChange={(e) =>
-                  setPayload({ ...payload, desc: e.target.value })
-                }
-              />
-              <Button onClick={handleSaveCategory} disabled={loading}>
-                {editingId ? "Update" : "Add"}
-              </Button>
-            </div>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <Card className="pt-6">
+            <CardContent>
+              {/* Input fields */}
+              <div className="flex flex-col md:flex-row gap-2 mb-4">
+                <Input
+                  placeholder="Category Name"
+                  value={payload.name || ""}
+                  onChange={(e) =>
+                    setPayload({ ...payload, name: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="Category Description"
+                  value={payload.desc || ""}
+                  onChange={(e) =>
+                    setPayload({ ...payload, desc: e.target.value })
+                  }
+                />
+                <Button onClick={handleSaveCategory} disabled={loading}>
+                  {editingId ? "Update" : "Add"}
+                </Button>
+              </div>
 
-            {/* Category list */}
-            {loading ? (
-              <p>Loading...</p>
-            ) : categories.length === 0 ? (
-              <p className="text-gray-500 italic">No data found</p>
-            ) : (
-              <ul className="space-y-2">
-                {categories.map((cat) => (
-                  <li
-                    key={cat._id}
-                    className="flex justify-between items-center border p-2 rounded"
-                  >
-                    <span>{cat.name}</span>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setPayload({
-                            name: cat.name || "",
-                            desc: cat.description || "",
-                          });
-                          setEditingId(cat._id);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleDeleteCategory(cat._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+              {/* Category list */}
+              {loading ? (
+                <p>Loading...</p>
+              ) : categories.length === 0 ? (
+                <p className="text-gray-500 italic">No data found</p>
+              ) : (
+                <ul className="space-y-2">
+                  {categories.map((cat) => (
+                    <li
+                      key={cat._id}
+                      className="flex justify-between items-center border p-2 rounded bg-white"
+                    >
+                      <div>
+                        <p className="font-medium">{cat.name}</p>
+                        {/* {cat.description && (
+                          <p className="text-sm text-gray-500">
+                            {cat.description}
+                          </p>
+                        )} */}
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setPayload({
+                              name: cat.name || "",
+                              desc: cat.description || "",
+                            });
+                            setEditingId(cat._id);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCategory(cat._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

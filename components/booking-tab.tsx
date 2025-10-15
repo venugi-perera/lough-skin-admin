@@ -407,98 +407,100 @@ export default function BookingsTab() {
             </div>
           ) : (
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Deposite</TableHead>
-                    <TableHead>Total Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bookings.map((booking) => (
-                    <TableRow key={booking._id}>
-                      <TableCell className="font-medium">
-                        {booking.customerDetails.name}
-                      </TableCell>
-                      <TableCell>
-                        {booking.services.map((s: any) => s.name).join(", ")}
-                      </TableCell>
-                      <TableCell>£{booking.depositPaid.toFixed(2)}</TableCell>
-                      <TableCell>£{booking.total.toFixed(2)}</TableCell>
-                      <TableCell>
-                        {formatAppointment(booking.appointmentDate)}
-                      </TableCell>
-                      <TableCell>{booking.appointmentTime}</TableCell>
-                      <TableCell>{booking.customerDetails.phone}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={getStatusColor(booking.payment_status)}
-                        >
-                          {booking.payment_status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {booking.status === "pending" && (
-                            <Button
-                              size="sm"
-                              onClick={() =>
-                                updateBookingStatus(booking._id, "confirmed")
-                              }
-                            >
-                              Confirm
-                            </Button>
-                          )}
-                          {booking.status === "confirmed" && (
+              <div className="max-h-[600px] overflow-y-auto rounded-md ">
+                <Table>
+                  <TableHeader className="sticky top-0 ">
+                    <TableRow>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Service</TableHead>
+                      <TableHead>Deposite</TableHead>
+                      <TableHead>Total Amount</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {bookings.map((booking) => (
+                      <TableRow key={booking._id}>
+                        <TableCell className="font-medium">
+                          {booking.customerDetails.name}
+                        </TableCell>
+                        <TableCell>
+                          {booking.services.map((s: any) => s.name).join(", ")}
+                        </TableCell>
+                        <TableCell>£{booking.depositPaid.toFixed(2)}</TableCell>
+                        <TableCell>£{booking.total.toFixed(2)}</TableCell>
+                        <TableCell>
+                          {formatAppointment(booking.appointmentDate)}
+                        </TableCell>
+                        <TableCell>{booking.appointmentTime}</TableCell>
+                        <TableCell>{booking.customerDetails.phone}</TableCell>
+                        <TableCell>
+                          <Badge
+                            className={getStatusColor(booking.payment_status)}
+                          >
+                            {booking.payment_status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {booking.status === "pending" && (
+                              <Button
+                                size="sm"
+                                onClick={() =>
+                                  updateBookingStatus(booking._id, "confirmed")
+                                }
+                              >
+                                Confirm
+                              </Button>
+                            )}
+                            {booking.status === "confirmed" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  updateBookingStatus(booking._id, "completed")
+                                }
+                              >
+                                Complete
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() =>
-                                updateBookingStatus(booking._id, "completed")
-                              }
-                            >
-                              Complete
-                            </Button>
-                          )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              const subject = encodeURIComponent(
-                                "Booking Confirmation - Your Appointment"
-                              );
-                              const body = encodeURIComponent(
-                                `Hello ${booking.customerDetails.name},\n\n` +
-                                  `Your appointment for ${booking.services
-                                    .map((s: any) => s.name)
-                                    .join(", ")} ` +
-                                  `on ${formatAppointment(
-                                    booking.appointmentDate
-                                  )} at ${
-                                    booking.appointmentTime
-                                  } has been confirmed.\n\n` +
-                                  `Total: £${booking.total.toFixed(2)}\n\n` +
-                                  `Thank you for choosing us!\n\nBest regards,\nLough Skin`
-                              );
+                              onClick={() => {
+                                const subject = encodeURIComponent(
+                                  "Booking Confirmation - Your Appointment"
+                                );
+                                const body = encodeURIComponent(
+                                  `Hello ${booking.customerDetails.name},\n\n` +
+                                    `Your appointment for ${booking.services
+                                      .map((s: any) => s.name)
+                                      .join(", ")} ` +
+                                    `on ${formatAppointment(
+                                      booking.appointmentDate
+                                    )} at ${
+                                      booking.appointmentTime
+                                    } has been confirmed.\n\n` +
+                                    `Total: £${booking.total.toFixed(2)}\n\n` +
+                                    `Thank you for choosing us!\n\nBest regards,\nLough Skin`
+                                );
 
-                              window.location.href = `mailto:${booking.customerDetails.email}?subject=${subject}&body=${body}`;
-                            }}
-                          >
-                            Confirm
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                                window.location.href = `mailto:${booking.customerDetails.email}?subject=${subject}&body=${body}`;
+                              }}
+                            >
+                              Confirm
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           )}
         </Card>
